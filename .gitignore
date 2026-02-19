@@ -1,9 +1,9 @@
-# Eclipse workspace (절대 커밋 X)
+# Eclipse workspace
 .metadata/
 .recommenders/
 RemoteSystemsTempFiles/
 
-# Eclipse project files (취향)
+# Eclipse project files
 *.class
 bin/
 target/
