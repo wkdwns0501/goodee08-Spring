@@ -9,4 +9,9 @@ bin/
 target/
 .gradle/
 
+.idea
+.vscode
+.DS_Store
+.metadata
+
 Servers
