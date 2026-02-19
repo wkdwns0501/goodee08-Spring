@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="https://jakarta.ee/xml/ns/jakartaee" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd" id="WebApp_ID" version="6.0">
+  <display-name>sp1</display-name>
+  
+  <!-- 스프링 웹 애플리케이션의 루트 컨텍스트를 초기화하는 설정 -->
+  <!-- 스프링 컨테이너를 웹 애플리케이션 시작 시 자동으로 구동시키는 역할 -->
+  <listener>
+  	<!-- 
+  		ContextLoaderListnener:
+  		서블릿 컨테이너(Tomcat 등)가 웹 애플리케이션을 시작할때 자동으로 실행되는 리스너 클래스
+  		contextconfigLocation에 지정된 root-context.xml 설정 파일을 로드하고,
+  		스프링의 Root ApplicationContext(부모 컨텍스트)를 생성
+  	-->
+  
+  	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <!-- 리스너에게 전달되는 초기화 파라미터 -->
+  <!-- 즉, 컨테이너를 띄울 때 이 XML을 읽어라 라고 지정하는 것 -->
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>/WEB-INF/spring/root-context.xml</param-value>
+  </context-param>
+  
+  <!-- Spring MVC의 프론트 컨트롤러(DispatcherServlet)를 등록하는 설정 -->
+  <!-- DispatcherServlet은 웹 요청을 모두 받아서 Spring MVC로 위임하는 핵심 서블릿 -->
+  <servlet>
+  	<servlet-name>appServlet</servlet-name>
+  	<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+  	<init-param>
+  		<param-name>contextConfigLocation</param-name>
+  		<param-value>/WEB-INF/spring/servlet-context.xml</param-value>
+  	</init-param>
+  	<load-on-startup>1</load-on-startup> 	
+  </servlet>
+  
+  <!-- DispatcherServlet이 어떤 URL 요청을 처리할지 결정하는 매핑 설정 -->
+  <servlet-mapping>
+  	<servlet-name>appServlet</servlet-name>
+  	<url-pattern>/</url-pattern> <!-- 모든 요청 -->
+  </servlet-mapping>
+  
+  <!-- 
+  	루트(/) 요청 시 자동으로 보여줄 기본 파일을 지정하는 서블릿 컨테이너의 설정이며,
+  	Spring MVC에서는 보통 Controller가 이를 대체하므로 제거해도 됨
+   -->
+  <!-- <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.xhtml</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.xhtml</welcome-file>
+  </welcome-file-list> -->
+</web-app>

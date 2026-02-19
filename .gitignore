@@ -1,0 +1,10 @@
+# Eclipse workspace (절대 커밋 X)
+.metadata/
+.recommenders/
+RemoteSystemsTempFiles/
+
+# Eclipse project files (취향)
+*.class
+bin/
+target/
+.gradle/

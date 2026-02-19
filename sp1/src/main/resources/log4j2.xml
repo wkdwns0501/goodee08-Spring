@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+  <!-- Appender, Layout 설정 -->
+  <!-- Appender: 로그를 어디로 보낼지(출력할지) 결정 -->
+  <!-- Layout: 로그 형식을 어떻게 만들지 결정 -->
+  <Appenders>
+  	<!-- 
+  		Console Appender를 하나 정의 
+  		name: console
+  		target: SYSTEM_OUT (표준 출력, 즉 콘솔), SYSTEM_ERR (표준 에러)
+  	-->
+    <Console name="console" target="SYSTEM_OUT">
+    	<!-- pattern: 콘솔에 loggerName location Level message 형식으로 출력 -->
+      <PatternLayout pattern="%c %l %5p %m%n"/>
+    </Console>
+    
+    <!-- 로그가 출력될 목적지로 파일, DB, 네트워크 전송도 가능 -->
+  </Appenders>
+
+  <!-- Logger 설정 -->
+  <!-- Logger: 어떤 수준(Level)으로 로그를 출력할지 결정 -->
+  <Loggers>
+  	<!-- org.springframework 하위의(패키지 단위로 설정가능) 로그는 DEBUG 레벨 이상만 출력 -->
+  	<!-- additivity: 이 로거의 이벤트는 부모(Root)로 전파되지 않음(즉, 중복 출력 방지) -->
+    <Logger name="org.springframework" level="DEBUG" additivity="false">
+    	<!-- 이 로거는 console에 출력 -->
+      <AppenderRef ref="console"/>
+    </Logger>
+    
+    <!-- 위에 명시된 logger에 매칭되지 않는 로그(그 외 패키지)는 Root 룰을 따름, INFO 이상이면 콘솔에 찍힘 -->
+    <Root level="INFO">
+      <AppenderRef ref="console"/>
+    </Root>
+  </Loggers>
+
+</Configuration>
