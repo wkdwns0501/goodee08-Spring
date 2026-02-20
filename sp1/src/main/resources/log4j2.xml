@@ -23,10 +23,19 @@
   <Loggers>
   	<!-- org.springframework 하위의(패키지 단위로 설정가능) 로그는 DEBUG 레벨 이상만 출력 -->
   	<!-- additivity: 이 로거의 이벤트는 부모(Root)로 전파되지 않음(즉, 중복 출력 방지) -->
-    <Logger name="org.springframework" level="DEBUG" additivity="false">
+    <Logger name="org.springframework" level="INFO" additivity="false">
     	<!-- 이 로거는 console에 출력 -->
       <AppenderRef ref="console"/>
     </Logger>
+    
+    <!-- hikariCP의 로그 레벨을 조금 더 자세히 기록하도록 DEBUG 레벨로 낮춤 -->
+    <Logger name="com.zaxxer" level="DEBUG" additivity="false">
+	    <AppenderRef ref="console"/>
+		</Logger>
+		
+		<Logger name="org.zerock" level="DEBUG" additivity="false">
+	    <AppenderRef ref="console"/>
+		</Logger>
     
     <!-- 위에 명시된 logger에 매칭되지 않는 로그(그 외 패키지)는 Root 룰을 따름, INFO 이상이면 콘솔에 찍힘 -->
     <Root level="INFO">
