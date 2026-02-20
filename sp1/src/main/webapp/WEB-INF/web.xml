@@ -11,7 +11,6 @@
   		contextconfigLocation에 지정된 root-context.xml 설정 파일을 로드하고,
   		스프링의 Root ApplicationContext(부모 컨텍스트)를 생성
   	-->
-  
   	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   
