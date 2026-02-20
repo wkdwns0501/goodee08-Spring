@@ -2,16 +2,30 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="
-		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/beans 
+		https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		https://www.springframework.org/schema/context/spring-context.xsd
+		http://mybatis.org/schema/mybatis-spring
+		http://mybatis.org/schema/mybatis-spring.xsd
+		http://www.springframework.org/schema/aop 
+		https://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+	">
 	
 	<!-- 
 		org.zerock.service 패키지를 스캔할 것을 지정,
 		스프링이 시작할 때 해당 패키지에 있는 클래스들을 스캔하면서
 		@Service 어노테이션이 존재하는 클래스를 찾아서 객체를 생성하고 이를 빈(Bean)으로 등록 
 	-->
-	<context:component-scan base-package="org.zerock.service" />
+	<context:component-scan base-package="org.zerock.service"/>
+	
+	<context:component-scan base-package="org.zerock.aop"/>
 
 	<!-- bean definitions here -->
 	<!-- hikariConfig 클래스의 객체를 생성하여 빈으로 등록 -->
@@ -26,8 +40,36 @@
 	</bean>
 
 	<bean name="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-		<!-- dataSource라는 이름의 빈을 등록할 때 해당 생성자에 주입하기 위해 생성자의 인자값으로 hokariConfig를 전달 -->
+		<!-- dataSource라는 이름의 빈을 등록할 때 해당 생성자에 주입하기 위해 생성자의 인자값으로 hikariConfig를 전달 -->
     <constructor-arg ref="hikariConfig"/>
 	</bean>
-
+	
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- MyBatis가 사용할 DB 연결 풀을 지정 -->
+		<!-- ref="dataSource"는 바로 위의 hikari 빈의 name="dataSource"를 의미 -->
+    <property name="dataSource" ref="dataSource"/>
+    <!-- resources의 mapper 폴더 안의 모든 xml 파일을 Mapper 파일의 위치로 설정 -->
+    <property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+	</bean>
+	
+	<!-- 스프링에서 JDBC 기반 트랜잭션 처리하기 위한 트랜잭션 매니저를 등록하는 설정 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<!-- 트랜잭션 매니저가 어떤 DB에 연결하는지 알려줌 -->
+    <property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- component-scan과 유사하게 특정 패키지 내부를 스캔해서 MyBatis의 Mapper 인터페이스로 처리하는 역할 -->
+	<mybatis-spring:scan base-package="org.zerock.mapper"/>
+	
+	<!-- Spring AOP에서 자동으로 Proxy 객체를 생성하라는 의미 -->
+	<!-- 
+		@Aspect로 정의된 클래스(Aspect)와 메소드(Advice)들을 인식 
+			-> 타켓(target) 객체와 결합해 자동으로 프록시 객체 생성 
+		즉, AOP가 적용 가능한 빈은 모두 프록시로 감싸짐
+	-->
+	<!-- 프록식 객체 = 실체 객체를 감싸서(대리) 호출을 제어하는 객체 -->
+	<aop:aspectj-autoproxy/>
+	
+	<tx:annotation-driven/>
+	
 </beans>
