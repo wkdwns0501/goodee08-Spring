@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="org.zerock.mapper.BoardMapper"> 
+
+	<!-- id는 메소드 명과 일치 -->
+	<insert id="insert">
+		<!-- keyProperty: INSERT가 완료된 후, DB에서 조회한 PK 값을 저장한 객체(DTO)의 필드 이름을 지정 -->
+		<!-- resultType: 조회할 키 값의 자바 타입을 지정 -->
+		<!-- order: <selectkey> 구문을 INSERT 실행 후에 실행하라는 의미 -->
+		<!-- LAST_INSERT_ID(): 반드시 INSERT가 끝난 후에 호출되어야 유효하므로 AFTER를 사용 (MySQL 문법) -->
+		<selectKey keyProperty="bno" resultType="Long" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+  	INSERT INTO tbl_board (title, content, writer) 
+  	VALUES (#{title}, #{content}, #{writer})
+	</insert>
+	
+	<select id="selectList">
+		SELECT * FROM tbl_board WHERE delflag = FALSE ORDER BY bno DESC
+	</select>
+	
+	<!-- resultType: SQL 실행 결과(ResultSet)을 어떤 타입의 객체로 매핑할 것인지 지정 -->
+	<select id="selectOne" resultType="BoardDTO">
+		SELECT * FROM tbl_board WHERE bno = #{bno}
+	</select>
+	
+	<update id="update">
+		UPDATE tbl_board 
+    SET title = #{title}, content = #{content}, updatedate = NOW(), delflag = #{delFlag}
+    WHERE bno = #{bno}
+	</update>
+	
+	<!-- 논리적 삭제(컬럼값 변경: delflag = T -->
+	<!-- 실제 삭제 X, 삭제 표시만 하는 경우 -->
+	<update id="delete">
+		UPDATE tbl_board SET delflag = TRUE WHERE bno = #{bno}
+	</update>
+	
+</mapper>
