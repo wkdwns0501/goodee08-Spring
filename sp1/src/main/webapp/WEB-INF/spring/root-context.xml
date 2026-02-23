@@ -50,6 +50,8 @@
     <property name="dataSource" ref="dataSource"/>
     <!-- resources의 mapper 폴더 안의 모든 xml 파일을 Mapper 파일의 위치로 설정 -->
     <property name="mapperLocations" value="classpath:/mapper/*.xml"/>
+    <!-- mybatis-config.xml 설정 파일을 이용하도록 등록 -->
+    <property name="configLocation" value="classpath:mybatis-config.xml"/>
 	</bean>
 	
 	<!-- 스프링에서 JDBC 기반 트랜잭션 처리하기 위한 트랜잭션 매니저를 등록하는 설정 -->
