@@ -1,6 +1,7 @@
 package org.zerock.dto;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,11 @@ public class BoardDTO {
 	private LocalDateTime regDate;
 	private LocalDateTime updateDate;
 	private boolean delFlag;
+	
+	public String getCreatedDate() {
+//		return regDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")); // 커스텀
+		return regDate.format(DateTimeFormatter.ISO_DATE); // 정해져있는 패턴
+	}
 	
 	// 빌더 패턴 연습 및 테스트용
 	private static void testBuilder() {
