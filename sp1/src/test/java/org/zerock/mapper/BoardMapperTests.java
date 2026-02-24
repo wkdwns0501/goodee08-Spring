@@ -60,6 +60,18 @@ public class BoardMapperTests {
 	}
 	
 	@Test
+	public void testSelectListByPage() {
+		int page = 2;
+		
+		// 계산
+		int count = 10; // LIMIT
+		int skip = (page - 1) * count; // OFFSET
+		
+		boardMapper.selectListByPage(skip, count)
+			.forEach(board -> log.info("board: " + board));
+	}
+	
+	@Test
 	public void testSelectOne() {
 		Long bno = 2L;
 		BoardDTO boardDTO = boardMapper.selectOne(bno);
