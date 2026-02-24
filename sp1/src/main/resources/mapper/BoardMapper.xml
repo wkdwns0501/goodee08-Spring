@@ -22,6 +22,15 @@
 		SELECT * FROM tbl_board WHERE delflag = FALSE ORDER BY bno DESC
 	</select>
 	
+	<select id="selectListByPage" resultType="BoardDTO">
+		SELECT * FROM tbl_board WHERE delflag = FALSE ORDER BY bno DESC
+		LIMIT #{count} OFFSET #{skip}
+	</select>
+	
+	<select id="countForPaging" resultType="int">
+		SELECT count(*) FROM tbl_board WHERE delflag = FALSE
+	</select>
+	
 	<!-- resultType: SQL 실행 결과(ResultSet)을 어떤 타입의 객체로 매핑할 것인지 지정 -->
 	<select id="selectOne" resultType="BoardDTO">
 		SELECT * FROM tbl_board WHERE bno = #{bno}
