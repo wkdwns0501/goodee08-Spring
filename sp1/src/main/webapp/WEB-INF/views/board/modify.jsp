@@ -63,9 +63,7 @@
 	}, false);
 	
 	document.querySelector(".btnList").addEventListener("click", () => {
-	  formObj.action = '/board/list';
-	  formObj.method = 'get';
-	  formObj.submit(); 
+	  location.href = '/board/list';
 	}, false);
 	
 	document.querySelector(".btnRemove").addEventListener("click", () => {
