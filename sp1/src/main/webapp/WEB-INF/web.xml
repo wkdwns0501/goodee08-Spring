@@ -31,6 +31,19 @@
   		<param-value>/WEB-INF/spring/servlet-context.xml</param-value>
   	</init-param>
   	<load-on-startup>1</load-on-startup> 	
+  	
+  	<!-- 파일 업로드 관련 설정 -->
+		<multipart-config>
+			<!-- 업로드 가능한 파일 1개의 최대 크기 (1MB * 20) -->
+			<max-file-size>20971520</max-file-size>
+				
+			<!-- 하나의 요청(Request)에서 허용되는 전체 업로드 최대 크기 (1MB * 40) -->
+	  	<max-request-size>41943040</max-request-size>
+	    	
+	  	<!-- 파일을 디스크에 쓰기 전까지 메모리에 보관할 임계 크기 (1MB * 20) -->
+	  	<file-size-threshold>20971520</file-size-threshold>
+	  </multipart-config>  	
+  	
   </servlet>
   
   <!-- DispatcherServlet이 어떤 URL 요청을 처리할지 결정하는 매핑 설정 -->
