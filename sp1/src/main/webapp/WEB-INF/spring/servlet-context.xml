@@ -43,6 +43,10 @@
 	  <property name="suffix" value=".jsp"/>
 	</bean>
 	
+	<!-- Spring MVC에서 MultipartFile을 사용하기 위해 설정 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+	
 	<!-- /resources/** 로 시작하는 모든 요청은 /resources/ 폴더 내에 있는 정적 리소스들을 그대로 응답 -->
 	<!-- 컨트롤러를 거치지 않음 --> <!-- /webapp 하위의 resources 폴더 -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
