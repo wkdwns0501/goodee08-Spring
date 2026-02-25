@@ -54,4 +54,33 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">알림</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">...</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" defer="defer">
+	const result = '${result}';
+	const action = '${action}';
+
+	const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+	const modalBody = document.querySelector('#myModal .modal-body');
+
+	if (result && action === 'modify') {
+		modalBody.textContent = result + '번 게시글이 수정되었습니다';
+		myModal.show();
+	}
+</script>
+
 <%@ include file="/WEB-INF/views/includes/footer.jsp" %>
