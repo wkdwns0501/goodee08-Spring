@@ -1,7 +1,6 @@
 package org.zerock.mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.zerock.dto.BoardDTO;
@@ -26,7 +25,14 @@ public interface BoardMapper {
 	// 3. DTO 객체 사용 (권장)
 //	List<BoardDTO> selectListByPage(PageRequestDTO dto);
 	
-	int countForPaging();
+	int countForPage();
+	
+	List<BoardDTO> selectListByPageAndSearch(@Param("skip") int skip, 
+											@Param("count") int count,
+											@Param("types") String[] types,
+											@Param("keyword") String keyword);
+	int countForPageAndSearch(@Param("types") String[] types,
+							  @Param("keyword") String keyword);
 	
 	BoardDTO selectOne(Long bno);
 	
