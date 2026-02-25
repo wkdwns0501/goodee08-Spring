@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="org.zerock.mapper.ReplyMapper"> 
+
+	<insert id="insert">
+		<selectKey keyProperty="rno" resultType="Long" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO tbl_reply (bno, replytext, replyer)
+		VALUES (#{bno}, #{replyText}, #{replyer})
+	</insert>
+	
+	<select id="selectReplyListOfBoard">
+		SELECT * FROM tbl_reply 
+		WHERE bno = #{bno} 
+		ORDER BY rno ASC 
+		LIMIT #{limit} OFFSET #{skip}
+	</select>
+	
+	<select id="replyCountOfBoard">
+		SELECT COUNT(rno) FROM tbl_reply WHERE bno = #{bno}
+	</select>
+	
+	<select id="selectOne" resultType="ReplyDTO">
+		SELECT * FROM tbl_reply WHERE rno = #{rno}
+	</select>
+	
+	<update id="update">
+		UPDATE tbl_reply SET replytext = #{replyText} WHERE rno = #{rno}
+	</update>
+	
+	<update id="delete">
+		UPDATE tbl_reply 
+		SET delflag = TRUE, replytext = '삭제된 댓글입니다, replyer = 'unknown' 
+		WHERE rno = #{rno}
+	</update>
+	
+</mapper>
