@@ -72,6 +72,22 @@ public class BoardMapperTests {
 	}
 	
 	@Test
+	public void testSelectListByPageAndSearch() {
+		int page = 2;
+		
+		// 계산
+		int count = 10; // LIMIT
+		int skip = (page - 1) * count; // OFFSET
+		
+		String[] types = {"T", "C", "W"};
+//		String[] types = null;
+		String keyword = "테스트";
+//		String keyword = "";
+		
+		boardMapper.selectListByPageAndSearch(skip, count, types, keyword);
+	}
+	
+	@Test
 	public void testSelectOne() {
 		Long bno = 2L;
 		BoardDTO boardDTO = boardMapper.selectOne(bno);
