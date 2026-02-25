@@ -18,18 +18,52 @@
   	VALUES (#{title}, #{content}, #{writer})
 	</insert>
 	
-	<select id="selectList">
+	<select id="selectList" resultType="BoardDTO">
 		SELECT * FROM tbl_board WHERE delflag = FALSE ORDER BY bno DESC
 	</select>
 	
 	<select id="selectListByPage" resultType="BoardDTO">
-		SELECT * FROM tbl_board WHERE delflag = FALSE ORDER BY bno DESC
+		SELECT * FROM tbl_board 
+		WHERE delflag = FALSE 
+		<include refid="search"></include>
+		ORDER BY bno DESC
+		LIMIT #{count} OFFSET #{skip}
+	</select> 
+	
+	<select id="countForPage" resultType="int">
+		SELECT count(*) FROM tbl_board WHERE delflag = FALSE
+	</select>
+	
+	<select id="selectListByPageAndSearch" resultType="BoardDTO">
+		SELECT * FROM tbl_board 
+		WHERE delflag = FALSE 
+		<include refid="search"></include>
+		ORDER BY bno DESC
 		LIMIT #{count} OFFSET #{skip}
 	</select>
 	
-	<select id="countForPaging" resultType="int">
-		SELECT count(*) FROM tbl_board WHERE delflag = FALSE
+	<select id="countForPageAndSearch" resultType="int">
+		SELECT count(bno) FROM tbl_board
+		WHERE delflag = FALSE
+		<include refid="search"></include>
 	</select>
+	
+	<sql id="search">
+		<if test="types != null and types!= '' and keyword != null and keyword != ''">
+			<!-- foreach 속성으로 반복의 시작이나 종료, 중간에 특정한 구문을 넣을 수 있음 -->
+			<foreach collection="types" item="type" open="AND (" close=")" separator="OR">
+				<if test='type.equals("T")'>
+					title like CONCAT('%', #{keyword}, '%')
+				</if>
+				<if test='type.equals("C")'>
+					content like CONCAT('%', #{keyword}, '%')
+				</if>
+				<if test='type.equals("W")'>
+					writer like CONCAT('%', #{keyword}, '%')
+				</if>
+			</foreach>
+		</if>
+	</sql>
 	
 	<!-- resultType: SQL 실행 결과(ResultSet)을 어떤 타입의 객체로 매핑할 것인지 지정 -->
 	<select id="selectOne" resultType="BoardDTO">
