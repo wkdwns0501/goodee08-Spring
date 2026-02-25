@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.dto.BoardDTO;
-import org.zerock.dto.BoardListPagingDTO;
 import org.zerock.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,17 +48,34 @@ public class BoardController {
 //	}
 	
 	// 목록 + 페이징
+//	@GetMapping("/list")
+//	public void selectListByPage(@RequestParam(name = "page", defaultValue = "1") int page, 
+//								@RequestParam(name = "size", defaultValue = "10") int size, 
+//								Model model) {
+//		log.info("/board/list/" + page + "/size/" + size);
+//		// 방법 1
+////		BoardListPagingDTO dto = boardService.getListByPage(page, size);
+////		model.addAttribute("boardList", dto.getBoardDTOList());
+////		model.addAttribute("total", dto.getTotalCount());
+//		// 방법 2 (페이징 관련 값이 많아질수록 좋음)
+//		model.addAttribute("boardPageDTO", boardService.getListByPage(page, size));
+//		// JSP의 forEach문 items를 ${boardDTO.boardDTOList}로 설정해야함 (작성 해놓음)
+//	}
+	
+	// 목록 + 페이징 + 검색
 	@GetMapping("/list")
-	public void selectListByPage(@RequestParam(name = "page", defaultValue = "1") int page, 
-								@RequestParam(name = "size", defaultValue = "10") int size, 
-								Model model) {
-		log.info("/board/list/" + page + "/size/" + size);
-		// 방법 1 (보통의 경우 권장)
-		BoardListPagingDTO dto = boardService.getListByPage(page, size);
-		model.addAttribute("boardList", dto.getBoardDTOList());
-		model.addAttribute("total", dto.getTotalCount());
+	public void selectListByPageAndSearch(@RequestParam(name = "page", defaultValue = "1") int page, 
+										 @RequestParam(name = "size", defaultValue = "10") int size, 
+										 @RequestParam(name = "types", required = false) String types,
+										 @RequestParam(name = "keyword", required = false) String keyword,
+										 Model model) {
+		log.info("/board/list/" + page + "/size/" + size + "/types/" + types + "/keyword/" + keyword);
+		// 방법 1
+//		BoardListPagingDTO dto = boardService.getListByPage(page, size);
+//		model.addAttribute("boardList", dto.getBoardDTOList());
+//		model.addAttribute("total", dto.getTotalCount());
 		// 방법 2 (페이징 관련 값이 많아질수록 좋음)
-//		model.addAttribute("boardDTO", boardService.getListByPage(page, size));
+		model.addAttribute("boardPageDTO", boardService.getListByPageAndSearch(page, size, types, keyword));
 		// JSP의 forEach문 items를 ${boardDTO.boardDTOList}로 설정해야함 (작성 해놓음)
 	}
 	
@@ -82,9 +98,11 @@ public class BoardController {
 	}
 	
 	@PostMapping("/modify")
-	public String modifyPost(BoardDTO boardDTO) {
+	public String modifyPost(BoardDTO boardDTO, RedirectAttributes rttr) {
 		log.info("POST /board/modify/" + boardDTO.getBno());
 		boardService.modify(boardDTO);
+		rttr.addFlashAttribute("result", boardDTO.getBno());
+		rttr.addFlashAttribute("action", "modify");
 		return "redirect:/board/read/" + boardDTO.getBno();
 	}
 	
