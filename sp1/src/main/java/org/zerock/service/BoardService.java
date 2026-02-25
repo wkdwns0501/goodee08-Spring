@@ -38,7 +38,7 @@ public class BoardService {
 	    page = page <= 0 ? 1 : page;
 	    size = (size < 10 || size > 100) ? 10 : size;
 
-	    int total = boardMapper.countForPaging();
+	    int total = boardMapper.countForPage();
 	    int lastPage = (int) Math.ceil(total / (double) size);
 
 	    if (lastPage == 0) lastPage = 1;
@@ -47,6 +47,25 @@ public class BoardService {
 
 	    List<BoardDTO> boardList = boardMapper.selectListByPage(skip, size);
 	    return new BoardListPagingDTO(boardList, total, page, size);
+	}
+	
+	public BoardListPagingDTO getListByPageAndSearch(int page, int size, String typeStr, String keyword){
+		page = page <= 0 ? 1 : page;
+		size = (size < 10 || size > 100) ? 10 : size;
+		
+		// 검색 관련 추가
+		String[] types = (typeStr != null && !typeStr.isEmpty()) ? typeStr.split("") : null;
+		
+		int total = boardMapper.countForPageAndSearch(types, keyword);
+		int lastPage = (int) Math.ceil(total / (double) size);
+		
+		if (lastPage == 0) lastPage = 1;
+		if (page > lastPage) page = lastPage;
+		int skip = (page - 1) * size;
+		
+		
+		List<BoardDTO> boardList = boardMapper.selectListByPageAndSearch(skip, size, types, keyword);
+		return new BoardListPagingDTO(boardList, total, page, size, typeStr, keyword);
 	}
 	
 	// 게시물 조회 처리: 파라미터는 게시물의 번호(bno)이고 리턴 타입은 BoardDTO를 사용
