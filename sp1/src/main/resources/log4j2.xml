@@ -29,7 +29,7 @@
     </Logger>
     
     <!-- hikariCP의 로그 레벨을 조금 더 자세히 기록하도록 DEBUG 레벨로 낮춤 -->
-    <Logger name="com.zaxxer" level="DEBUG" additivity="false">
+    <Logger name="com.zaxxer" level="INFO" additivity="false">
 	    <AppenderRef ref="console"/>
 		</Logger>
 		
