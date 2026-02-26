@@ -63,7 +63,6 @@ public class BoardService {
 		if (page > lastPage) page = lastPage;
 		int skip = (page - 1) * size;
 		
-		
 		List<BoardDTO> boardList = boardMapper.selectListByPageAndSearch(skip, size, types, keyword);
 		return new BoardListPagingDTO(boardList, total, page, size, typeStr, keyword);
 	}
