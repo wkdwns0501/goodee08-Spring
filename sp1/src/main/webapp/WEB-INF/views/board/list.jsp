@@ -49,6 +49,7 @@
 									<a href="/board/read/${board.bno}">
 										<c:out value="${board.title}" />        					
 									</a>
+									<b style="color: blue">[<c:out value="${board.replyCnt}"/>]</b>
 								</td>
 								<td><c:out value="${board.writer}" /></td>
 								<td><c:out value="${board.createdDate}" /></td>
