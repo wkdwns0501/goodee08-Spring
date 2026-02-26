@@ -35,6 +35,8 @@
         <a href="#" class="list-group-item">User List</a>
         <a href="#" class="list-group-item">Roles</a>
         <a href="#" class="list-group-item">System Logs</a>
+        <a href="${pageContext.request.contextPath}/board/list" class="list-group-item">Board List</a>
+        <a href="${pageContext.request.contextPath}/board/add" class="list-group-item">Board Add</a>
       </div>
     </div>
 
