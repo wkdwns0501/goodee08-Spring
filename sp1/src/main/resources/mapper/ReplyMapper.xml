@@ -33,9 +33,11 @@
 	</update>
 	
 	<update id="delete">
-		UPDATE tbl_reply 
-		SET delflag = TRUE, replytext = '삭제된 댓글입니다, replyer = 'unknown' 
-		WHERE rno = #{rno}
+	  UPDATE tbl_reply
+	  SET delflag = TRUE,
+	      replytext = '삭제된 댓글입니다',
+	      replyer = 'unknown'
+	  WHERE rno = #{rno}
 	</update>
 	
 </mapper>
