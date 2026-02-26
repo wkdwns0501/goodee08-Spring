@@ -35,10 +35,13 @@
 	</select>
 	
 	<select id="selectListByPageAndSearch" resultType="BoardDTO">
-		SELECT * FROM tbl_board 
-		WHERE delflag = FALSE 
+		SELECT tb.bno, title, writer, regdate, COUNT(rno) AS replyCnt
+		FROM tbl_board tb
+		LEFT JOIN tbl_reply tr ON tb.bno = tr.bno
+		WHERE tb.delflag = FALSE
 		<include refid="search"></include>
-		ORDER BY bno DESC
+		GROUP BY tb.bno
+		ORDER BY tb.bno DESC
 		LIMIT #{count} OFFSET #{skip}
 	</select>
 	
