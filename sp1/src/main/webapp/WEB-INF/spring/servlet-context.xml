@@ -51,4 +51,10 @@
 	<!-- 컨트롤러를 거치지 않음 --> <!-- /webapp 하위의 resources 폴더 -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	
+	<!-- 서버의 로컬 디렉토리를 웹 정적 리소스로 공개하는 설정 -->
+	<!-- 브라우저에서 /images/** 경로로 요청이 오면 서버의 C:/upload/ 디렉토리에서 파일을 찾아 그대로 응답 -->
+	<!-- 컨트롤러를 거치지 않음 -->
+	<!-- file: 파일 시스템을 의미하는 접두사(중요) -->
+	<mvc:resources mapping="/images/**" location="file:C:/upload/" />
+	
 </beans>
