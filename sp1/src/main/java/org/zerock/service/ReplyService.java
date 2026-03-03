@@ -60,18 +60,17 @@ public class ReplyService {
 	}
 	
 	public void remove(Long rno) {
-		  try {
+		try {
 		    int deleteCount = replyMapper.delete(rno);
-
 		    if (deleteCount == 0) {
 		      throw new ReplyException(404, "NOT FOUND");
 		    }
 		  } catch (ReplyException e) {
-		    throw e;
+			  throw e;
 		  } catch (Exception e) {
-		    log.error("Reply delete failed. rno={}", rno, e);
-		    throw new ReplyException(500, "DELETE ERROR");
+		  	log.error("Reply delete failed. rno={}", rno, e);
+    			throw new ReplyException(500, "DELETE ERROR");
 		  }
-		}
+	}
 	
 }
