@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="org.zerock.mapper.ProductMapper">
+	
+	
+	<insert id="insert">
+		<!-- 
+			ProductDTO를 추가하는 과정에서 새롭게 만들어진 상품의 번호로 상품 이미지를 추가해야 하기 때문에
+			LAST_INSERT_ID()를 이용해서 insert 된 상품의 번호를 알 수 있도록 구성
+		-->
+		<selectKey keyProperty="pno" resultType="Integer" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO tbl_product (pname, pdesc, price, sale, writer) 
+		VALUES (#{pname}, #{pdesc}, #{price}, TRUE, #{writer})
+	</insert>
+	
+	<insert id="insertImage">
+		INSERT INTO tbl_product_image (pno, filename, uuid, ord) 
+		VALUES
+			<foreach collection="imageList" item="image" separator=",">
+				(#{pno}, #{image.fileName}, #{image.uuid}, #{image.ord})
+			</foreach>
+	</insert>
+	
+	<select id="selectList" resultType="ProductListDTO">
+		<!-- SELECT tp.pno, pname, pdesc, price, sale, writer, tp.regdate, ino, uuid, filename, ord
+		FROM tbl_product tp
+		LEFT JOIN tbl_product_image tpi ON tp.pno = tpi.pno
+		WHERE tpi.ord = 0
+		ORDER BY tp.pno DESC
+		LIMIT #{count} OFFSET #{skip} -->
+		<!-- WHERE 조건으로 인해 이미지가 없는 상품은 결과에서 제거됨 -->
+		
+		<!-- 더 나은 방식 -->
+		<!-- 상품 목록을 조회하되 이미지가 있으면 ord = 0(대표 이미지)만 가져오고 이미지가 없어도 상품은 보여주자 -->
+		<!-- JOIN 조건으로 이동 -->
+		SELECT tp.pno, pname, pdesc, price, sale, writer, tp.regdate, ino, uuid, filename, ord
+		FROM tbl_product tp
+		LEFT JOIN tbl_product_image tpi ON tp.pno = tpi.pno 
+			AND tpi.ord = 0 <!-- LEFT JOIN 유지, 이미지가 없으면 tpi.* 컬럼만 NULL, 상품은 항상 조회됨 -->
+		ORDER BY tp.pno DESC
+		LIMIT #{count} OFFSET #{skip}
+	</select>
+	
+	<select id="count" resultType="int">
+		SELECT COUNT(*) FROM tbl_product tp
+	</select>
+	
+	<!-- 조회 결과를 ProductDTO로 매핑 -->
+	<resultMap type="ProductDTO" id="selectMap">
+		<!-- 
+			<id/>: 객체를 구성하는 기준으로 MyBatis가 같은 Product인지 중복을 판단 
+						 JOIN 결과에서 중복 ProductDTO 생성을 방지
+						 즉, pno가 동일하면 기존 객체를 재사용하고 ino 기준으로 이미지 추가
+						 (property는 자바 기준, column은 DB 기준)
+		-->
+		<id property="pno" column="pno" />
+		<result property="pname" column="pname"/>
+		<result property="pdesc" column="pdesc"/>
+		<result property="price" column="price"/>
+		<result property="sale" column="sale"/>
+		<result property="writer" column="writer"/>
+		
+		<!-- 다수의 상품 이미지 결과를 List<ProductImageDTO>로 매핑 -->
+		<!-- ofType: 컬렉션 요소의 타입 -->
+		<collection property="imageList" ofType="ProductImageDTO">
+			<id property="ino" column="ino" />
+			<result property="uuid" column="uuid"/>
+			<result property="fileName" column="filename"/>
+			<result property="ord" column="ord"/>			
+		</collection>
+	</resultMap>
+	
+	<!-- 이렇게 쓰면 행 단위로 객체가 만들어지고, 이미지 리스트는 매핑조차 되지 않음 -->
+	<!-- <select id="selectOne" resultType="ProductDTO"> -->
+	<select id="selectOne" resultMap="selectMap"> <!-- resultMap 명칭은 작명 -->
+		SELECT tp.pno, pname, pdesc, price, sale, writer, tp.regdate, ino, uuid, filename, ord
+		FROM tbl_product tp
+		LEFT JOIN tbl_product_image tpi ON tp.pno = tpi.pno
+		WHERE tp.pno = #{pno}
+		ORDER BY tpi.ord
+	</select>
+	
+	<update id="updateOne">
+		UPDATE tbl_product 
+		SET pname = #{pname}, pdesc = #{pdesc}, price = #{price} 
+		WHERE pno = #{pno}
+	</update>
+	
+	<update id="deleteOne">
+		UPDATE tbl_product SET sale = FALSE WHERE pno = #{pno}
+	</update>
+	
+	<delete id="deleteImage">
+		DELETE FROM tbl_product_image WHERE pno = #{pno}
+	</delete>
+
+</mapper>
