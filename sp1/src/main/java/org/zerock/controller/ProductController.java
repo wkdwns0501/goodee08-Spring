@@ -7,13 +7,17 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.dto.ProductDTO;
+import org.zerock.dto.ProductListPagingDTO;
+import org.zerock.mapper.ProductMapper;
+import org.zerock.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,16 +29,17 @@ import net.coobird.thumbnailator.Thumbnails;
 @RequestMapping("/product")
 public class ProductController {
 	
+	private final ProductService productService;
+	
 	@GetMapping("/add")
 	public void add() {
 		log.info("product add");
 	}
 	
 	@PostMapping("/add")
-	public String addPost(ProductDTO productDTO, RedirectAttributes rttr,
+	public String add(ProductDTO productDTO, RedirectAttributes rttr,
 					   @RequestParam("files") MultipartFile[] files) {
 		log.info("----------------------------");
-		
 		log.info(productDTO);
 		log.info(files);
 		
@@ -49,6 +54,72 @@ public class ProductController {
 			productDTO.addImage(uuid, fileName);
 		});
 		
+		Integer pno = productService.add(productDTO);
+		
+		// 1회성 메세지
+		// 예: 등록 / 수정 / 삭제 후 메세지 전달
+		rttr.addFlashAttribute("result", pno);
+		rttr.addFlashAttribute("action", "add");
+		
+		return "redirect:/product/list";
+	}
+	
+	@GetMapping("/list")
+	public String list(@RequestParam(name = "page", defaultValue = "1") int page, 
+					@RequestParam(name = "size", defaultValue = "10") int size,
+					 Model model) {
+		ProductListPagingDTO productListDTO = productService.getList(page, size);
+		model.addAttribute("productListDTO", productListDTO);
+		return "/product/list";
+	}
+	
+	@GetMapping("/read/{pno}")
+	public String read(@PathVariable("pno") Integer pno, Model model) {
+		ProductDTO productDTO = productService.read(pno);
+		model.addAttribute("product", productDTO);
+		return "/product/read";
+	}
+	
+	@GetMapping("/modify/{pno}")
+	public String modify(@PathVariable("pno") Integer pno, Model model) {
+		ProductDTO productDTO = productService.read(pno);
+		model.addAttribute("product", productDTO);
+		return "/product/modify";
+	}
+	
+	@PostMapping("/modify")
+	public String modify(ProductDTO productDTO, RedirectAttributes rttr, 
+						@RequestParam(name = "oldImages", required = false) String[] oldImages, 
+						@RequestParam("files") MultipartFile[] files) {
+		// 새로 추가된 파일 업로드
+		List<String> newFileNames = uploadFiles(files);
+		// oldImages : 기존 이미지 추가
+		if (oldImages != null && oldImages.length > 0) {
+			for (String oldImage : oldImages) {
+				String uuid = oldImage.substring(0, 36);
+				String fileName = oldImage.substring(37);
+				productDTO.addImage(uuid, fileName);
+			}
+		}
+		// newImages : 새로운 이미지 추가
+		if (newFileNames != null && newFileNames.size() > 0) {
+			for (String newImage : newFileNames) {
+				String uuid = newImage.substring(0, 36);
+				String fileName = newImage.substring(37);
+				productDTO.addImage(uuid, fileName);
+			}
+		}
+		productService.modify(productDTO);
+		rttr.addFlashAttribute("result", productDTO.getPno());
+		rttr.addFlashAttribute("action", "modify");
+		return "redirect:/product/read/" + productDTO.getPno();
+	}
+	
+	@PostMapping("/remove")
+	public String remove(@RequestParam("pno") Integer pno, RedirectAttributes rttr) {
+		productService.remove(pno);
+		rttr.addFlashAttribute("result", pno);
+		rttr.addFlashAttribute("action", "remove");
 		return "redirect:/product/list";
 	}
 	
