@@ -52,6 +52,15 @@
   	<url-pattern>/</url-pattern> <!-- 모든 요청 -->
   </servlet-mapping>
   
+  <filter>
+		<filter-name>springSecurityFilterChain</filter-name> <!-- 작명 -->
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+  
   <!-- 
   	루트(/) 요청 시 자동으로 보여줄 기본 파일을 지정하는 서블릿 컨테이너의 설정이며,
   	Spring MVC에서는 보통 Controller가 이를 대체하므로 제거해도 됨
