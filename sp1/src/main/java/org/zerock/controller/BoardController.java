@@ -1,5 +1,6 @@
 package org.zerock.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,6 +82,7 @@ public class BoardController {
 	
 	// 게시물 조회는 GET 방식으로 게시물의 번호로 해당 게시물을 Model에 담아서 전달하는 방식으로 구성
 	// 경로의 마지막 값을 게시물의 번호로 활용
+	@PreAuthorize("isAuthenticated()") // 로그인 안하고 상세 페이지 클릭 -> 로그인 -> 상세 페이지로 리다이렉트
 	@GetMapping("/read/{bno}")
 	public String read(@PathVariable("bno") Long bno, Model model) {
 		log.info("GET /board/read/" + bno);
@@ -97,8 +99,9 @@ public class BoardController {
 		return "/board/modify";
 	}
 	
-	@PostMapping("/modify")
-	public String modifyPost(BoardDTO boardDTO, RedirectAttributes rttr) {
+	@PreAuthorize("authentication.name == #boardDTO.writer") // name은 Username
+	@PostMapping("/modify")	// boardDTO는 modify의 매개변수명과 같아야함, writer는 jsp 폼안에 input name과 같아야함
+	public String modify(BoardDTO boardDTO, RedirectAttributes rttr) {
 		log.info("POST /board/modify/" + boardDTO.getBno());
 		boardService.modify(boardDTO);
 		rttr.addFlashAttribute("result", boardDTO.getBno());
