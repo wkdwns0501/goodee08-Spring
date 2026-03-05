@@ -1,5 +1,6 @@
 package org.zerock.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,5 +94,20 @@ public class HelloController {
 	@GetMapping("/ex8")
 	public void ex8() {
 		log.info("/hello/ex8");
+	}
+	
+	@GetMapping("/access-denied")
+	public String accessDenied() {
+		return "/hello/accessDenied";
+	}
+	
+	@PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+//	@PreAuthorize("hasRole('MANAGER')")
+//	@PreAuthorize("hasRole('ADMIN')") // 내부적으로 "ROLE_"을 자동으로 붙임 -> 이 사용자가 ADMIN 역할인가?
+//	@PreAuthorize("hasAuthority('ROLE_ADMIN')") // 주어진 문자열 그대로 비교 -> 이 문자열 권한을 가지고 있는가?
+	@GetMapping("/ex9")
+	public void ex9() {
+		log.info("/hello/ex8");
+		helloService.hello1();
 	}
 }
