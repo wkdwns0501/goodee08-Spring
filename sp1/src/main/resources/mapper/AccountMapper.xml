@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="org.zerock.mapper.AccountMapper"> 
+
+	<insert id="insert">
+  	INSERT INTO tbl_account (uid, upw, uname, email) 
+  	VALUES (#{uid}, #{upw}, #{uname}, #{email})
+	</insert>
+	
+	<insert id="insertRoles">
+  	INSERT INTO tbl_account_roles (uid, rolename) 
+  	VALUES 
+  		<foreach collection="roleNames" item="role" separator=",">
+		  	(#{uid}, #{role})
+  		</foreach>
+	</insert>
+	
+	<resultMap type="AccountDTO" id="selectMap">
+		<id property="uid" column="uid" />
+		<result property="upw" column="upw"/>
+		<result property="uname" column="uname"/>
+		<result property="email" column="email"/>
+		
+		<collection property="roleNames" ofType="AccountRole">
+			<!-- 
+				내부 동작:
+				1. column="rolename"에서 VARCHAR 타입의 값을 가져옴(예: "USER")
+				2. typeHandler를 통해 "USER" 문자열을 AccountRole.USER Enum 객체로 변환
+				3. 변환된 Enum 객체 자체를 roleNames 리스트에 add()
+			 -->
+			<result column="rolename" typeHandler="org.apache.ibatis.type.EnumTypeHandler" javaType="AccountRole"/>
+		</collection> <!-- AccountRole:Enum 타입, rolename:VARCHAR 타입 이라서 자동 매핑X -->
+	</resultMap>
+	
+	<select id="selectOne" resultMap="selectMap">
+		SELECT ac.uid, ac.upw, ac.uname, ac.email, ar.rolename
+		FROM tbl_account ac
+		JOIN tbl_account_roles ar ON ac.uid = ar.uid
+		WHERE ac.uid = #{uid}
+	</select>
+	
+</mapper>
