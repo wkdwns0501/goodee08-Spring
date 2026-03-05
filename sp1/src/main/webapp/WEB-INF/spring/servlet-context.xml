@@ -3,13 +3,17 @@
 	   xmlns:mvc="http://www.springframework.org/schema/mvc"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:security="http://www.springframework.org/schema/security"
 	   xsi:schemaLocation="
 			http://www.springframework.org/schema/beans
 			https://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/mvc
 			https://www.springframework.org/schema/mvc/spring-mvc.xsd
 			http://www.springframework.org/schema/context
-			https://www.springframework.org/schema/context/spring-context.xsd">
+			https://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/security
+			https://www.springframework.org/schema/security/spring-security.xsd
+">
 			
 		<!-- 
 			(참고) 컨텍스트 계층 구조 
@@ -56,5 +60,12 @@
 	<!-- 컨트롤러를 거치지 않음 -->
 	<!-- file: 파일 시스템을 의미하는 접두사(중요) -->
 	<mvc:resources mapping="/images/**" location="file:C:/upload/" />
+	
+	<!-- 
+		메소드 실행 전에 권한을 체크하는 @PreAuthorize / 실행 후 체크하는 @PostAuthorize와 같은 
+		메소드 보안 어노테이션을 사용할 수 있도록 허용 (XML 방법)
+		(SecurityConfig의 @EnableMethodSecurity(prePostEnabled = true) 와 같은 역할)
+	-->
+	<security:global-method-security pre-post-annotations="enabled" />
 	
 </beans>
