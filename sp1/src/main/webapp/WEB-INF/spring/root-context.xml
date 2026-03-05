@@ -26,6 +26,12 @@
 	<context:component-scan base-package="org.zerock.service"/>
 	
 	<context:component-scan base-package="org.zerock.aop"/>
+	
+	<context:component-scan base-package="org.zerock.service" />
+		
+	<context:component-scan base-package="org.zerock.aop" />
+	
+	<context:component-scan base-package="org.zerock.security" />
 
 	<!-- bean definitions here -->
 	<!-- hikariConfig 클래스의 객체를 생성하여 빈으로 등록 -->
