@@ -1,6 +1,7 @@
 package org.zerock.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.zerock.dto.AccountDTO;
 import org.zerock.dto.BoardDTO;
 import org.zerock.service.BoardService;
 
@@ -84,8 +86,15 @@ public class BoardController {
 	// 경로의 마지막 값을 게시물의 번호로 활용
 	@PreAuthorize("isAuthenticated()") // 로그인 안하고 상세 페이지 클릭 -> 로그인 -> 상세 페이지로 리다이렉트
 	@GetMapping("/read/{bno}")
-	public String read(@PathVariable("bno") Long bno, Model model) {
+	public String read(@PathVariable("bno") Long bno, 
+			Model model, 
+//			Authentication authentication,
+			@AuthenticationPrincipal AccountDTO accountDTO) {
 		log.info("GET /board/read/" + bno);
+//		log.info("authentication: " + authentication);
+//		log.info("getPrincipal(): " + authentication.getPrincipal());
+//		AccountDTO accountDTO = (AccountDTO) authentication.getPrincipal();
+		log.info("accountDTO: " + accountDTO);
 		// BoardDTO 객체를 model에 담아서 전달
 		model.addAttribute("board", boardService.read(bno));
 		return "/board/read";
