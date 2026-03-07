@@ -1,5 +1,8 @@
 package org.zerock.security;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -23,6 +28,9 @@ import lombok.extern.log4j.Log4j2;
 //@EnableMethodSecurity(prePostEnabled = true) // 예제에서는 XML 설정을 사용
 public class SecurityConfig {
 	
+	@Autowired
+	private DataSource dataSource;
+	
 	@Bean // 빈 등록 어노테이션
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		log.info("-------------- security config --------------");
@@ -31,8 +39,27 @@ public class SecurityConfig {
 		// 아이디/비밀번호 기반의 HTML 폼을 통한 로그인 기능을 활성화
 		// 스프링 시큐리티의 기본 로그인 처리 흐름을 구성
 		http.formLogin(config -> {
+			// 커스텀 로그인 페이지의 경로를 지정
+			config.loginPage("/account/login");
 			
+			// 로그인 성공 시 핸들러 등록
+			config.successHandler(new CustomLoginSuccessHandler());
 		});
+		
+		http.rememberMe(config -> {
+			// 서버의 비밀키 값 설정 가능
+			config.key("very-secret-key");
+			// 깃허브에 커밋 -> 키 값이 그대로 노출
+			// 보통은 환경 변수 / 설정 파일 사용
+			
+			config.tokenRepository(persistentTokenRepository());
+			config.tokenValiditySeconds(60 * 60 * 24 * 30); // 30일 유지
+		});
+		
+		// (참고) 로그아웃 시 추가로 다른 쿠키도 삭제하고 싶을 때 설정
+//		http.logout(config -> {
+//			config.deleteCookies("JSESSIONID", "remember-me");
+//		});
 		
 		http.csrf(csrf -> csrf.disable()); // 예제할 때는 번거롭기 때문에 CSRF 완전 비활성화
 		
@@ -57,4 +84,13 @@ public class SecurityConfig {
 							// 공격자(해커): 해시가 느릴수록 공격 비용 폭증
 	}
 	
+	@Bean
+	public PersistentTokenRepository persistentTokenRepository() {
+		// 스프링 시큐리티에서 기본적으로 제공하는 토큰 저장을 위한 클래스
+		JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+		tokenRepository.setDataSource(dataSource);
+//		tokenRepository.setCreateTableOnStartup(true); // 테이블 자동 생성(권장 X)
+		
+		return tokenRepository;
+	}
 }
