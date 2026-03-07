@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +22,14 @@
         <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
       </ul>
       <span class="navbar-text">
-        Logged in as <strong>admin</strong> | <a href="#" class="text-white text-decoration-underline">Logout</a>
+        <sec:authorize access="isAuthenticated()">
+          <sec:authentication property="name"/><!--  Authentication.getName() = Username(로그인한 유저의 아이디) -->
+          |
+          <a href="${pageContext.request.contextPath}/account/logout" class="text-white text-decoration-underline">Logout</a>
+        </sec:authorize>
+        <sec:authorize access="isAnonymous()">
+          <a href="${pageContext.request.contextPath}/account/login" class="text-white text-decoration-underline">Login</a>
+        </sec:authorize>
       </span>
     </div>
   </nav>
