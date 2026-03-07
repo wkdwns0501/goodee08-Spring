@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <%@ include file="/WEB-INF/views/includes/header.jsp" %>
 	
@@ -42,7 +44,11 @@
 			    <a href="/board/list">
 				    <button type="button" class="btn btn-info btnList">LIST</button>	      	
 					</a>
-				  <c:if test="${!board.delFlag}">
+					
+					<sec:authentication property="principal" var="secInfo"/>
+					<sec:authentication property="authorities" var="roles"/>
+					
+				  <c:if test="${!board.delFlag && (secInfo.uid == board.writer || fn:contains(roles, 'ROLE_ADMIN'))}">
 				  	<a href="/board/modify/${board.bno}">
 				    	<button type="button" class="btn btn-warning btnModify">MODIFY</button>
 				  	</a>
