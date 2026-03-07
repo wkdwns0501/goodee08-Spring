@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <%@ include file="/WEB-INF/views/includes/header.jsp"%>
 
 <div class="row justify-content-center">
@@ -9,6 +11,9 @@
 			<div class="card-header py-3">
 				<h6 class="m-0 font-weight-bold text-primary">Board Register</h6>
 			</div>
+			
+			<!-- 사용자 인증 정보 확인용 -->
+			<%-- <sec:authentication property="principal"/> --%>
 
 			<div class="card-body">
 				<form action="/board/add" method="post">
@@ -25,7 +30,8 @@
 
 					<div class="mb-3">
 						<label class="form-label">Writer</label> 
-						<input type="text" name="writer" class="form-control">
+						<input type="text" value='<sec:authentication property="principal.uid"/>' 
+									 name="writer" class="form-control" readonly>
 					</div>
 
 					<!-- Submit Button -->
